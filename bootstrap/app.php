@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/*',
         ]);
+        // Alias para proteger rutas API que requieren sesión activa
+        $middleware->alias([
+            'auth.session' => \App\Http\Middleware\EnsureSessionAuthenticated::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -10,9 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('cliente', function (Blueprint $table) {
-            //
-        });
+        if (!Schema::hasColumn('cliente', 'idUsuario')) {
+            Schema::table('cliente', function (Blueprint $table) {
+                $table->integer('idUsuario')->nullable()->after('idCliente');
+                $table->foreign('idUsuario')->references('idUsuario')->on('usuario')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -20,8 +23,12 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('cliente', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('cliente', 'idUsuario')) {
+            Schema::table('cliente', function (Blueprint $table) {
+                $table->dropForeign(['idUsuario']);
+                $table->dropColumn('idUsuario');
+            });
+        }
     }
 };
+
