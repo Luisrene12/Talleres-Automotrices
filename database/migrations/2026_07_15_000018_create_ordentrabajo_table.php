@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('ordentrabajo', function (Blueprint $table) {
             $table->integer('idOrden', true);
             $table->integer('idCliente');
-            $table->integer('idVehiculo');
-            $table->integer('idMecanico');
+            $table->integer('idVehiculo')->nullable();
+            $table->integer('idMecanico')->nullable();
             $table->date('fechaIngreso');
             $table->date('fechaEntrega')->nullable();
             $table->string('estado', 50)->default('Pendiente');
