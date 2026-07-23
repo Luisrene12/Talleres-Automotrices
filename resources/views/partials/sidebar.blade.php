@@ -1,16 +1,19 @@
 <!-- BARRA LATERAL DE NAVEGACIÓN -->
 <aside id="dashboardSidebar" style="display: none;">
+    <!-- Brand Header -->
     <div class="sidebar-brand">
         <div class="brand-icon">
-            <i class="fa-solid fa-laptop-code"></i>
+            <i class="fa-solid fa-screwdriver-wrench"></i>
         </div>
         <div>
-            <span class="brand-text">SisGest Pro</span>
-            <span class="brand-version">v2.4.1</span>
+            <span class="brand-text">Taller</span>
+            <span class="brand-version">Automotriz</span>
         </div>
     </div>
 
+    <!-- Navigation Menu -->
     <div class="menu-container">
+
         <div class="menu-item active" id="nav-panel" onclick="switchView('panel')">
             <div class="menu-item-label">
                 <i class="fa-solid fa-chart-pie"></i>
@@ -41,7 +44,7 @@
             </div>
         </div>
 
-        <div class="menu-section-title">Catálogo</div>
+        <div class="menu-section-title">Catálogo de servicios</div>
 
         <div class="menu-item" id="nav-tipos-servicio" onclick="switchView('tipos-servicio')">
             <div class="menu-item-label">
@@ -57,7 +60,7 @@
             </div>
         </div>
 
-        <div class="menu-section-title">Proveedores</div>
+        <div class="menu-section-title">Directorio</div>
 
         <div class="menu-item" id="nav-proveedores" onclick="switchView('proveedores')">
             <div class="menu-item-label">
@@ -65,9 +68,10 @@
                 <span>Proveedores</span>
             </div>
         </div>
+
     </div>
 
-    <!-- Sidebar Profile Box -->
+    <!-- Sidebar Profile Footer -->
     <div class="sidebar-profile">
         <div class="profile-info">
             <div class="profile-avatar" id="avatarLetter">?</div>

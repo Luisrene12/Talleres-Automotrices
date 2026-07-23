@@ -23,7 +23,7 @@
                 title: "Usuarios",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Gestión de Usuarios",
-                cardSubtitle: "usuarios registrados · CU02",
+                cardSubtitle: "usuarios registrados",
                 actionText: "Nuevo usuario",
                 actionFn: () => openAddModal('usuarios'),
                 search: true,
@@ -37,7 +37,7 @@
                 title: "Roles",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Gestión de Roles",
-                cardSubtitle: "roles configurados · CU02",
+                cardSubtitle: "roles configurados",
                 actionText: "Nuevo rol",
                 actionFn: () => openAddModal('roles'),
                 search: true,
@@ -51,7 +51,7 @@
                 title: "Permisos",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Gestión de Permisos",
-                cardSubtitle: "permisos registrados · CU02",
+                cardSubtitle: "permisos registrados",
                 actionText: "Nuevo permiso",
                 actionFn: () => openAddModal('permisos'),
                 search: true,
@@ -65,7 +65,7 @@
                 title: "Tipos de Servicio",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Categorías de Servicio",
-                cardSubtitle: "categorías para catálogo · CU03",
+                cardSubtitle: "categorías para catálogo",
                 actionText: "Nuevo tipo",
                 actionFn: () => openAddModal('tipos-servicio'),
                 search: true,
@@ -79,7 +79,7 @@
                 title: "Servicios",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Gestión de Servicios",
-                cardSubtitle: "servicios del catálogo · CU03",
+                cardSubtitle: "servicios del catálogo",
                 actionText: "Nuevo servicio",
                 actionFn: () => openAddModal('servicios'),
                 search: true,
@@ -93,7 +93,7 @@
                 title: "Proveedores",
                 subtitle: "Sistema de Gestión Empresarial",
                 cardTitle: "Gestión de Proveedores",
-                cardSubtitle: "proveedores registrados · CU04",
+                cardSubtitle: "proveedores registrados",
                 actionText: "Nuevo proveedor",
                 actionFn: () => openAddModal('proveedores'),
                 search: true,
@@ -106,15 +106,22 @@
         };
 
         // Switch View controller
-        async function switchView(viewName) {
+        async function switchView(viewName, pushState = true) {
             currentView = viewName;
             editingId = null;
+
+            if (pushState) {
+                const urlPath = viewName === 'panel' ? '/' : '/' + viewName;
+                window.history.pushState({ view: viewName }, '', urlPath);
+            }
 
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${viewName}`);
             if (activeNav) activeNav.classList.add('active');
 
             const conf = viewConfigs[viewName];
+            if (!conf) return; // Prevent errors on invalid routes
+            
             document.getElementById('viewTitle').textContent = conf.title;
             document.getElementById('viewSubtitle').textContent = conf.subtitle;
 
@@ -138,6 +145,16 @@
             }
         }
 
+        // Handle Browser Back/Forward buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.view) {
+                switchView(event.state.view, false);
+            } else {
+                switchView('panel', false);
+            }
+        });
+
+
         // Load all dashboard KPI data
         async function loadPanelDashboard() {
             try {
@@ -160,10 +177,10 @@
 
                 // Bar chart
                 const bars = [
-                    { label: 'Usuarios',    val: usuarios.length,    color: '#2563eb' },
-                    { label: 'Roles',       val: roles.length,       color: '#0891b2' },
-                    { label: 'Servicios',   val: servicios.length,   color: '#d97706' },
-                    { label: 'Proveedores', val: proveedores.length, color: '#059669' }
+                    { label: 'Usuarios',    val: usuarios.length,    color: 'linear-gradient(90deg,#6366f1,#818cf8)' },
+                    { label: 'Roles',       val: roles.length,       color: 'linear-gradient(90deg,#06b6d4,#22d3ee)' },
+                    { label: 'Servicios',   val: servicios.length,   color: 'linear-gradient(90deg,#f59e0b,#fcd34d)' },
+                    { label: 'Proveedores', val: proveedores.length, color: 'linear-gradient(90deg,#10b981,#34d399)' }
                 ];
                 const maxVal = Math.max(...bars.map(b => b.val), 1);
                 const chartWrap = document.getElementById('barChartWrap');
@@ -217,17 +234,17 @@
                 
                 // Update subtitle counts if applicable
                 if (currentView === 'usuarios') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} usuarios registrados · CU02`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} usuarios registrados`;
                 } else if (currentView === 'roles') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} roles configurados · CU02`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} roles configurados`;
                 } else if (currentView === 'permisos') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} permisos registrados · CU02`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} permisos registrados`;
                 } else if (currentView === 'tipos-servicio') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} categorías para catálogo · CU03`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} categorías para catálogo`;
                 } else if (currentView === 'servicios') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} servicios del catálogo · CU03`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} servicios del catálogo`;
                 } else if (currentView === 'proveedores') {
-                    document.getElementById('cardSubtitle').textContent = `${currentData.length} proveedores registrados · CU04`;
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} proveedores registrados`;
                 }
 
                 renderTable(currentData);
@@ -317,7 +334,7 @@
                         <tr>
                             <td>${index + 1}</td>
                             <td><strong>${item.nombre}</strong></td>
-                            <td>${item.precioBase} USD</td>
+                            <td>Bs. ${item.precioBase}</td>
                             <td>${item.duracionEstimada ? item.duracionEstimada + ' min' : '-'}</td>
                             <td><span class="role-badge">${item.tipo_servicio ? item.tipo_servicio.nombre : 'ID: ' + item.idTipoServicio}</span></td>
                             <td class="actions-cell">
@@ -399,21 +416,76 @@
                         }
                     }
                 } else {
-                    // Show login, hide everything
-                    loginScreen.style.display = 'flex';
+                    // Show landing screen instead of login by default
+                    const landingScreen = document.getElementById('landingScreen');
+                    if (landingScreen) {
+                        landingScreen.style.display = 'block';
+                        landingScreen.classList.remove('hidden');
+                    }
+                    
+                    loginScreen.style.display = 'none';
                     sidebar.style.display = 'none';
                     wrapper.style.display = 'none';
                     if (clientPortal) clientPortal.style.display = 'none';
+                    
+                    if (window.location.pathname === '/login') {
+                        showLoginScreen();
+                    } else if (window.location.pathname !== '/') {
+                        window.history.replaceState({}, '', '/');
+                    }
                 }
             } catch (err) {
                 console.error("Auth check failed:", err);
             }
         }
+        
+        function showLoginScreen() {
+            const landing = document.getElementById('landingScreen');
+            if (landing) {
+                landing.classList.add('hidden');
+                setTimeout(() => landing.style.display = 'none', 500);
+            }
+            const login = document.getElementById('loginScreen');
+            if (login) {
+                login.style.display = 'flex';
+            }
+            if (window.location.pathname !== '/login') {
+                window.history.pushState({}, '', '/login');
+            }
+        }
+        
+        function hideLoginScreen() {
+            const login = document.getElementById('loginScreen');
+            if (login) {
+                login.style.display = 'none';
+            }
+            const landing = document.getElementById('landingScreen');
+            if (landing) {
+                landing.style.display = 'block';
+                landing.classList.remove('hidden');
+            }
+            if (window.location.pathname !== '/') {
+                window.history.pushState({}, '', '/');
+            }
+        }
+        
+        function scrollToLocations() {
+            const loc = document.getElementById('landingLocations');
+            if (loc) {
+                loc.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
         async function handleLoginSubmit(e) {
             e.preventDefault();
-            const login = document.getElementById('loginUsername').value;
+            const login = document.getElementById('loginUsername').value.trim();
             const contrasena = document.getElementById('loginPassword').value;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const errBox = document.getElementById('loginError');
+
+            // Reset error
+            if (errBox) errBox.style.display = 'none';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...'; }
 
             const res = await fetch('/api/login', {
                 method: 'POST',
@@ -421,21 +493,40 @@
                 body: JSON.stringify({ login, contrasena })
             });
 
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> <span>Ingresar al Sistema</span>'; }
+
             if (res.ok) {
                 triggerToast('Acceso concedido al sistema');
                 checkAuth();
+            } else if (res.status === 429) {
+                if (errBox) { errBox.textContent = '⚠ Demasiados intentos. Espera 1 minuto e inténtalo de nuevo.'; errBox.style.display = 'block'; }
             } else {
-                alert('Las credenciales proporcionadas son incorrectas.');
+                if (errBox) { errBox.textContent = '✗ Usuario o contraseña incorrectos.'; errBox.style.display = 'block'; }
+                // Shake animation
+                const card = document.querySelector('.login-card');
+                if (card) { card.classList.add('shake'); setTimeout(() => card.classList.remove('shake'), 600); }
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
             }
         }
 
         function openLogoutModal() {
-            if (confirm('¿Desea cerrar la sesión del sistema?')) {
-                fetch('/api/logout', { method: 'POST', headers }).then(() => {
-                    triggerToast('Sesión cerrada');
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            fetch('/api/logout', { method: 'POST', headers }).then(() => {
+                closeLogoutModal();
+                triggerToast('Sesión cerrada correctamente');
+                setTimeout(() => {
+                    window.history.replaceState({}, '', '/');
                     checkAuth();
-                });
-            }
+                }, 600);
+            });
         }
 
         function togglePasswordVisibility() {
@@ -456,11 +547,15 @@
             userField.value = email;
             passField.value = password;
             // Briefly highlight the filled fields
-            userField.style.borderColor = '#3b82f6';
-            passField.style.borderColor = '#3b82f6';
+            userField.style.borderColor = '#6366f1';
+            passField.style.borderColor = '#6366f1';
+            userField.style.boxShadow = '0 0 0 4px rgba(99,102,241,0.25)';
+            passField.style.boxShadow = '0 0 0 4px rgba(99,102,241,0.25)';
             setTimeout(() => {
                 userField.style.borderColor = '';
                 passField.style.borderColor = '';
+                userField.style.boxShadow = '';
+                passField.style.boxShadow = '';
             }, 1200);
             passField.type = 'password';
             document.querySelector('.password-toggle-icon').classList.remove('fa-eye-slash');
@@ -628,7 +723,7 @@
                         <input type="text" class="form-control" id="f_nombre" required>
                     </div>
                     <div class="form-group">
-                        <label>Precio Base</label>
+                        <label>Precio Base (Bs.)</label>
                         <input type="number" step="0.01" class="form-control" id="f_precioBase" required>
                     </div>
                     <div class="form-group">
@@ -778,4 +873,37 @@
 
         // Initial setup
         checkAuth();
-        switchView('panel');
+        
+        // Read the URL path to load the correct view
+        const initialPath = window.location.pathname.replace(/^\/|\/$/g, '');
+        const validViews = ['panel', 'usuarios', 'roles', 'permisos', 'servicios', 'tipos-servicio', 'proveedores'];
+        
+        if (initialPath && validViews.includes(initialPath)) {
+            switchView(initialPath, false); // false = don't pushState on initial load
+        } else {
+            switchView('panel', false);
+        }
+
+        // --- 3D TILT EFFECT FOR PROFILES ---
+        function init3DTilt() {
+            const cards = document.querySelectorAll('.tilt-element');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -15; // Invertido para sensación real
+                    const rotateY = ((x - centerX) / centerX) * 15;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                });
+            });
+        }
+        
+        // Inicializar tilt para las tarjetas que existan en el DOM
+        setTimeout(init3DTilt, 500);
