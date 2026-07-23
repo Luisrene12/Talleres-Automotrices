@@ -69,6 +69,59 @@
             </div>
         </div>
 
+        <div class="menu-section-title">Clientes y Vehículos</div>
+
+        <div class="menu-item" id="nav-clientes" onclick="switchView('clientes')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-address-card"></i>
+                <span>Clientes</span>
+            </div>
+        </div>
+
+        <div class="menu-item" id="nav-vehiculos" onclick="switchView('vehiculos')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-car"></i>
+                <span>Vehículos</span>
+            </div>
+        </div>
+
+        <div class="menu-item" id="nav-citas" onclick="switchView('citas')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Citas</span>
+            </div>
+        </div>
+
+        <div class="menu-section-title">Taller</div>
+
+        <div class="menu-item" id="nav-mecanicos" onclick="switchView('mecanicos')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Mecánicos</span>
+            </div>
+        </div>
+
+        <div class="menu-item" id="nav-repuestos" onclick="switchView('repuestos')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-gears"></i>
+                <span>Repuestos</span>
+            </div>
+        </div>
+
+        <div class="menu-item" id="nav-inventario" onclick="switchView('inventario')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>Inventario</span>
+            </div>
+        </div>
+
+        <div class="menu-item" id="nav-movimientos-inventario" onclick="switchView('movimientos-inventario')">
+            <div class="menu-item-label">
+                <i class="fa-solid fa-right-left"></i>
+                <span>Movimientos</span>
+            </div>
+        </div>
+
     </div>
 
     <!-- Sidebar Profile Footer -->

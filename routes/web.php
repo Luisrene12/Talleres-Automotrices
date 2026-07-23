@@ -10,6 +10,13 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\TipoServicioController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\CitaController;
+use App\Http\Controllers\MecanicoController;
+use App\Http\Controllers\RepuestoController;
+use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\MovimientoInventarioController;
 
 // ─────────────────────────────────────────────────────────────────
 // Rate Limiter: máximo 5 intentos de login por minuto por IP
@@ -63,7 +70,7 @@ Route::get('/login', function () {
 // Rutas SPA del panel administrativo
 Route::get('/{view}', function () {
     return view('welcome');
-})->where('view', 'panel|usuarios|roles|permisos|servicios|tipos-servicio|proveedores');
+})->where('view', 'panel|usuarios|roles|permisos|servicios|tipos-servicio|proveedores|clientes|vehiculos|citas|mecanicos|repuestos|inventario|movimientos-inventario');
 
 // ─────────────────────────────────────────────────────────────────
 // API Routes
@@ -90,6 +97,22 @@ Route::prefix('api')->group(function () {
 
         // CU04: Proveedores
         Route::apiResource('proveedores', ProveedorController::class);
+
+        // CU06-CU09: Clientes, Vehículos, Citas
+        Route::apiResource('clientes', ClienteController::class);
+        Route::apiResource('vehiculos', VehiculoController::class);
+        Route::get('/modelos-vehiculo', fn () => response()->json(\App\Models\ModeloVehiculo::with('marca')->get()));
+        Route::apiResource('citas', CitaController::class);
+
+        // CU11: Mecánicos
+        Route::apiResource('mecanicos', MecanicoController::class);
+        Route::get('/sucursales', fn () => response()->json(\App\Models\Sucursal::all()));
+        Route::get('/especialidades', fn () => response()->json(\App\Models\Especialidad::all()));
+
+        // CU05, CU16, CU17: Repuestos e Inventario
+        Route::apiResource('repuestos', RepuestoController::class);
+        Route::apiResource('inventario', InventarioController::class);
+        Route::apiResource('movimientos-inventario', MovimientoInventarioController::class)->except(['update']);
 
         // Portal del Cliente
         Route::get('/client/profile',      [\App\Http\Controllers\ClientePortalController::class, 'getProfile']);

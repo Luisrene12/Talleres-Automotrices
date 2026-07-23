@@ -8,6 +8,15 @@
         let currentData = [];
         let allRoles = [];
         let allTiposServicio = [];
+        let allClientes = [];
+        let allVehiculos = [];
+        let allMecanicos = [];
+        let allModelos = [];
+        let allSucursales = [];
+        let allEspecialidades = [];
+        let allProveedores = [];
+        let allRepuestos = [];
+        let allInventarios = [];
         let editingId = null;
 
         // View Configurations
@@ -100,6 +109,104 @@
                 cols: ["#", "Razón Social", "NIT", "Teléfono", "Email", "Acciones"],
                 loadData: async () => {
                     const res = await fetch('/api/proveedores', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            clientes: {
+                title: "Clientes",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Gestión de Clientes",
+                cardSubtitle: "clientes registrados",
+                actionText: "Nuevo cliente",
+                actionFn: () => openAddModal('clientes'),
+                search: true,
+                cols: ["#", "Nombre completo", "CI/NIT", "Teléfono", "Dirección", "Vehículos", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/clientes', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            vehiculos: {
+                title: "Vehículos",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Gestión de Vehículos",
+                cardSubtitle: "vehículos registrados",
+                actionText: "Nuevo vehículo",
+                actionFn: () => openAddModal('vehiculos'),
+                search: true,
+                cols: ["#", "Placa", "Cliente", "Marca / Modelo", "Año", "Color", "Kilometraje", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/vehiculos', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            citas: {
+                title: "Citas",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Gestión de Citas",
+                cardSubtitle: "citas agendadas",
+                actionText: "Nueva cita",
+                actionFn: () => openAddModal('citas'),
+                search: true,
+                cols: ["#", "Fecha", "Hora", "Cliente", "Vehículo", "Mecánico", "Estado", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/citas', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            mecanicos: {
+                title: "Mecánicos",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Gestión de Mecánicos",
+                cardSubtitle: "mecánicos registrados",
+                actionText: "Nuevo mecánico",
+                actionFn: () => openAddModal('mecanicos'),
+                search: true,
+                cols: ["#", "Nombre completo", "CI", "Teléfono", "Sucursal", "Especialidades", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/mecanicos', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            repuestos: {
+                title: "Repuestos",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Gestión de Repuestos",
+                cardSubtitle: "repuestos en catálogo",
+                actionText: "Nuevo repuesto",
+                actionFn: () => openAddModal('repuestos'),
+                search: true,
+                cols: ["#", "Código", "Nombre", "Marca", "Precio Venta", "Proveedor", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/repuestos', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            inventario: {
+                title: "Inventario",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Control de Inventario",
+                cardSubtitle: "registros de inventario",
+                actionText: "Nuevo registro",
+                actionFn: () => openAddModal('inventario'),
+                search: true,
+                cols: ["#", "Repuesto", "Sucursal", "Stock Actual", "Stock Mínimo", "Ubicación", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/inventario', { headers });
+                    return res.ok ? await res.json() : [];
+                }
+            },
+            'movimientos-inventario': {
+                title: "Movimientos de Inventario",
+                subtitle: "Sistema de Gestión Empresarial",
+                cardTitle: "Movimientos de Inventario",
+                cardSubtitle: "movimientos registrados",
+                actionText: "Nuevo movimiento",
+                actionFn: () => openAddModal('movimientos-inventario'),
+                search: true,
+                cols: ["#", "Fecha", "Repuesto", "Sucursal", "Tipo", "Cantidad", "Motivo", "Acciones"],
+                loadData: async () => {
+                    const res = await fetch('/api/movimientos-inventario', { headers });
                     return res.ok ? await res.json() : [];
                 }
             }
@@ -245,6 +352,20 @@
                     document.getElementById('cardSubtitle').textContent = `${currentData.length} servicios del catálogo`;
                 } else if (currentView === 'proveedores') {
                     document.getElementById('cardSubtitle').textContent = `${currentData.length} proveedores registrados`;
+                } else if (currentView === 'clientes') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} clientes registrados`;
+                } else if (currentView === 'vehiculos') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} vehículos registrados`;
+                } else if (currentView === 'citas') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} citas agendadas`;
+                } else if (currentView === 'mecanicos') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} mecánicos registrados`;
+                } else if (currentView === 'repuestos') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} repuestos en catálogo`;
+                } else if (currentView === 'inventario') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} registros de inventario`;
+                } else if (currentView === 'movimientos-inventario') {
+                    document.getElementById('cardSubtitle').textContent = `${currentData.length} movimientos registrados`;
                 }
 
                 renderTable(currentData);
@@ -354,6 +475,119 @@
                             <td class="actions-cell">
                                 <button class="action-btn edit" onclick="openEditModal(${item.idProveedor})"><i class="fa-regular fa-pen-to-square"></i></button>
                                 <button class="action-btn delete" onclick="deleteRecord(${item.idProveedor})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'clientes') {
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${item.nombreCompleto}</strong></td>
+                            <td>${item.ci_nit}</td>
+                            <td>${item.telefono || '-'}</td>
+                            <td>${item.direccion || '-'}</td>
+                            <td>${item.vehiculos_count ?? 0}</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idCliente})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idCliente})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'vehiculos') {
+                    const marcaModelo = item.modelo ? `${item.modelo.marca ? item.modelo.marca.nombre : ''} ${item.modelo.nombre}`.trim() : '-';
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${item.placa}</strong></td>
+                            <td>${item.cliente ? item.cliente.nombreCompleto : '-'}</td>
+                            <td>${marcaModelo}</td>
+                            <td>${item.anio}</td>
+                            <td>${item.color || '-'}</td>
+                            <td>${item.kilometraje ?? 0} km</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idVehiculo})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idVehiculo})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'citas') {
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.fecha}</td>
+                            <td>${item.hora ? item.hora.substring(0, 5) : '-'}</td>
+                            <td>${item.cliente ? item.cliente.nombreCompleto : '-'}</td>
+                            <td>${item.vehiculo ? item.vehiculo.placa : '-'}</td>
+                            <td>${item.mecanico ? item.mecanico.nombreCompleto : 'Sin asignar'}</td>
+                            <td><span class="status-badge activo">${item.estado}</span></td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idCita})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idCita})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'mecanicos') {
+                    const especialidadesText = (item.especialidades && item.especialidades.length)
+                        ? item.especialidades.map(e => e.nombre).join(', ')
+                        : 'Sin especialidades';
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${item.nombreCompleto}</strong></td>
+                            <td>${item.ci}</td>
+                            <td>${item.telefono || '-'}</td>
+                            <td>${item.sucursal ? item.sucursal.nombre : '-'}</td>
+                            <td>${especialidadesText}</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idMecanico})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idMecanico})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'repuestos') {
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.codigo}</td>
+                            <td><strong>${item.nombre}</strong></td>
+                            <td>${item.marca || '-'}</td>
+                            <td>Bs. ${item.precioVenta}</td>
+                            <td>${item.proveedor ? item.proveedor.razonSocial : 'Sin proveedor'}</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idRepuesto})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idRepuesto})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'inventario') {
+                    const bajoStock = item.stockActual < item.stockMinimo;
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.repuesto ? item.repuesto.nombre : '-'}</td>
+                            <td>${item.sucursal ? item.sucursal.nombre : '-'}</td>
+                            <td><span class="status-badge ${bajoStock ? 'inactivo' : 'activo'}">${item.stockActual}</span></td>
+                            <td>${item.stockMinimo}</td>
+                            <td>${item.ubicacion || '-'}</td>
+                            <td class="actions-cell">
+                                <button class="action-btn edit" onclick="openEditModal(${item.idInventario})"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idInventario})"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                } else if (currentView === 'movimientos-inventario') {
+                    const fechaFmt = item.fecha ? new Date(item.fecha.replace(' ', 'T')).toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+                    rowHtml = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${fechaFmt}</td>
+                            <td>${item.inventario && item.inventario.repuesto ? item.inventario.repuesto.nombre : '-'}</td>
+                            <td>${item.inventario && item.inventario.sucursal ? item.inventario.sucursal.nombre : '-'}</td>
+                            <td>${item.tipo}</td>
+                            <td>${item.cantidad}</td>
+                            <td>${item.motivo || '-'}</td>
+                            <td class="actions-cell">
+                                <button class="action-btn delete" onclick="deleteRecord(${item.idMovimiento})"><i class="fa-regular fa-trash-can"></i></button>
                             </td>
                         </tr>
                     `;
@@ -583,6 +817,12 @@
                 if (currentView === 'tipos-servicio') return d.idTipoServicio === id;
                 if (currentView === 'servicios') return d.idServicio === id;
                 if (currentView === 'proveedores') return d.idProveedor === id;
+                if (currentView === 'clientes') return d.idCliente === id;
+                if (currentView === 'vehiculos') return d.idVehiculo === id;
+                if (currentView === 'citas') return d.idCita === id;
+                if (currentView === 'mecanicos') return d.idMecanico === id;
+                if (currentView === 'repuestos') return d.idRepuesto === id;
+                if (currentView === 'inventario') return d.idInventario === id;
             });
 
             if (item) {
@@ -616,6 +856,47 @@
                     document.getElementById('f_nit').value = item.nit;
                     document.getElementById('f_telefono').value = item.telefono || '';
                     document.getElementById('f_email').value = item.email || '';
+                } else if (currentView === 'clientes') {
+                    document.getElementById('f_nombreCompleto').value = item.nombreCompleto;
+                    document.getElementById('f_ci_nit').value = item.ci_nit;
+                    document.getElementById('f_telefono').value = item.telefono || '';
+                    document.getElementById('f_direccion').value = item.direccion || '';
+                } else if (currentView === 'vehiculos') {
+                    document.getElementById('f_idCliente').value = item.idCliente;
+                    document.getElementById('f_idModelo').value = item.idModelo;
+                    document.getElementById('f_placa').value = item.placa;
+                    document.getElementById('f_anio').value = item.anio;
+                    document.getElementById('f_color').value = item.color || '';
+                    document.getElementById('f_kilometraje').value = item.kilometraje ?? 0;
+                } else if (currentView === 'citas') {
+                    document.getElementById('f_idCliente').value = item.idCliente;
+                    document.getElementById('f_idVehiculo').value = item.idVehiculo;
+                    document.getElementById('f_idMecanico').value = item.idMecanico || '';
+                    document.getElementById('f_fecha').value = item.fecha;
+                    document.getElementById('f_hora').value = item.hora ? item.hora.substring(0, 5) : '';
+                    document.getElementById('f_estado').value = item.estado;
+                    document.getElementById('f_motivo').value = item.motivo || '';
+                } else if (currentView === 'mecanicos') {
+                    document.getElementById('f_nombreCompleto').value = item.nombreCompleto;
+                    document.getElementById('f_ci').value = item.ci;
+                    document.getElementById('f_telefono').value = item.telefono || '';
+                    document.getElementById('f_idSucursal').value = item.idSucursal;
+                    const especialidadIds = (item.especialidades || []).map(e => e.idEspecialidad);
+                    document.querySelectorAll('.f_especialidad').forEach(cb => {
+                        cb.checked = especialidadIds.includes(parseInt(cb.value, 10));
+                    });
+                } else if (currentView === 'repuestos') {
+                    document.getElementById('f_codigo').value = item.codigo;
+                    document.getElementById('f_nombre').value = item.nombre;
+                    document.getElementById('f_marca').value = item.marca || '';
+                    document.getElementById('f_precioVenta').value = item.precioVenta;
+                    document.getElementById('f_idProveedor').value = item.idProveedor || '';
+                } else if (currentView === 'inventario') {
+                    document.getElementById('f_idRepuesto').value = item.idRepuesto;
+                    document.getElementById('f_idSucursal').value = item.idSucursal;
+                    document.getElementById('f_stockActual').value = item.stockActual;
+                    document.getElementById('f_stockMinimo').value = item.stockMinimo;
+                    document.getElementById('f_ubicacion').value = item.ubicacion || '';
                 }
             }
 
@@ -637,6 +918,45 @@
                 allTiposServicio = tsRes.ok ? await tsRes.json() : [];
             } catch (e) {
                 console.error("Fallo cargando catálogos auxiliares");
+            }
+
+            try {
+                if (['vehiculos', 'citas'].includes(currentView)) {
+                    const res = await fetch('/api/clientes', { headers });
+                    allClientes = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'vehiculos') {
+                    const res = await fetch('/api/modelos-vehiculo', { headers });
+                    allModelos = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'citas') {
+                    const resV = await fetch('/api/vehiculos', { headers });
+                    allVehiculos = resV.ok ? await resV.json() : [];
+                    const resM = await fetch('/api/mecanicos', { headers });
+                    allMecanicos = resM.ok ? await resM.json() : [];
+                }
+                if (currentView === 'mecanicos' || currentView === 'inventario') {
+                    const res = await fetch('/api/sucursales', { headers });
+                    allSucursales = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'mecanicos') {
+                    const res = await fetch('/api/especialidades', { headers });
+                    allEspecialidades = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'repuestos') {
+                    const res = await fetch('/api/proveedores', { headers });
+                    allProveedores = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'inventario') {
+                    const res = await fetch('/api/repuestos', { headers });
+                    allRepuestos = res.ok ? await res.json() : [];
+                }
+                if (currentView === 'movimientos-inventario') {
+                    const res = await fetch('/api/inventario', { headers });
+                    allInventarios = res.ok ? await res.json() : [];
+                }
+            } catch (e) {
+                console.error("Fallo cargando catálogos del módulo de taller");
             }
 
             if (currentView === 'usuarios') {
@@ -757,6 +1077,226 @@
                         <input type="email" class="form-control" id="f_email">
                     </div>
                 `;
+            } else if (currentView === 'clientes') {
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" class="form-control" id="f_nombreCompleto" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CI / NIT</label>
+                        <input type="text" class="form-control" id="f_ci_nit" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" class="form-control" id="f_telefono">
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" class="form-control" id="f_direccion">
+                    </div>
+                `;
+            } else if (currentView === 'vehiculos') {
+                const clientesOpts = allClientes.map(c => `<option value="${c.idCliente}">${c.nombreCompleto} (${c.ci_nit})</option>`).join('');
+                const modelosOpts = allModelos.map(m => `<option value="${m.idModelo}">${m.marca ? m.marca.nombre : ''} ${m.nombre}</option>`).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select class="form-control" id="f_idCliente" required>
+                            <option value="">Seleccione Cliente</option>
+                            ${clientesOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <select class="form-control" id="f_idModelo" required>
+                            <option value="">Seleccione Modelo</option>
+                            ${modelosOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Placa</label>
+                        <input type="text" class="form-control" id="f_placa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Año</label>
+                        <input type="number" class="form-control" id="f_anio" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" class="form-control" id="f_color">
+                    </div>
+                    <div class="form-group">
+                        <label>Kilometraje</label>
+                        <input type="number" class="form-control" id="f_kilometraje" value="0">
+                    </div>
+                `;
+            } else if (currentView === 'citas') {
+                const clientesOpts = allClientes.map(c => `<option value="${c.idCliente}">${c.nombreCompleto}</option>`).join('');
+                const vehiculosOpts = allVehiculos.map(v => `<option value="${v.idVehiculo}">${v.placa}</option>`).join('');
+                const mecanicosOpts = allMecanicos.map(m => `<option value="${m.idMecanico}">${m.nombreCompleto}</option>`).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select class="form-control" id="f_idCliente" required>
+                            <option value="">Seleccione Cliente</option>
+                            ${clientesOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehículo</label>
+                        <select class="form-control" id="f_idVehiculo" required>
+                            <option value="">Seleccione Vehículo</option>
+                            ${vehiculosOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mecánico (opcional)</label>
+                        <select class="form-control" id="f_idMecanico">
+                            <option value="">Sin asignar</option>
+                            ${mecanicosOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" class="form-control" id="f_fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora</label>
+                        <input type="time" class="form-control" id="f_hora" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select class="form-control" id="f_estado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Confirmada">Confirmada</option>
+                            <option value="Cancelada">Cancelada</option>
+                            <option value="Completada">Completada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Motivo</label>
+                        <input type="text" class="form-control" id="f_motivo">
+                    </div>
+                `;
+            } else if (currentView === 'mecanicos') {
+                const sucursalesOpts = allSucursales.map(s => `<option value="${s.idSucursal}">${s.nombre}</option>`).join('');
+                const especialidadesChecks = allEspecialidades.map(e => `
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input f_especialidad" value="${e.idEspecialidad}" id="esp_${e.idEspecialidad}">
+                        <label class="form-check-label" for="esp_${e.idEspecialidad}">${e.nombre}</label>
+                    </div>
+                `).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" class="form-control" id="f_nombreCompleto" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CI</label>
+                        <input type="text" class="form-control" id="f_ci" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" class="form-control" id="f_telefono">
+                    </div>
+                    <div class="form-group">
+                        <label>Sucursal</label>
+                        <select class="form-control" id="f_idSucursal" required>
+                            <option value="">Seleccione Sucursal</option>
+                            ${sucursalesOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Especialidades</label>
+                        ${especialidadesChecks}
+                    </div>
+                `;
+            } else if (currentView === 'repuestos') {
+                const proveedoresOpts = allProveedores.map(p => `<option value="${p.idProveedor}">${p.razonSocial}</option>`).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" class="form-control" id="f_codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" class="form-control" id="f_nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" class="form-control" id="f_marca">
+                    </div>
+                    <div class="form-group">
+                        <label>Precio de Venta (Bs.)</label>
+                        <input type="number" step="0.01" class="form-control" id="f_precioVenta" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Proveedor (opcional)</label>
+                        <select class="form-control" id="f_idProveedor">
+                            <option value="">Sin proveedor</option>
+                            ${proveedoresOpts}
+                        </select>
+                    </div>
+                `;
+            } else if (currentView === 'inventario') {
+                const repuestosOpts = allRepuestos.map(r => `<option value="${r.idRepuesto}">${r.codigo} - ${r.nombre}</option>`).join('');
+                const sucursalesOpts = allSucursales.map(s => `<option value="${s.idSucursal}">${s.nombre}</option>`).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Repuesto</label>
+                        <select class="form-control" id="f_idRepuesto" required>
+                            <option value="">Seleccione Repuesto</option>
+                            ${repuestosOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sucursal</label>
+                        <select class="form-control" id="f_idSucursal" required>
+                            <option value="">Seleccione Sucursal</option>
+                            ${sucursalesOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Actual</label>
+                        <input type="number" class="form-control" id="f_stockActual" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Mínimo</label>
+                        <input type="number" class="form-control" id="f_stockMinimo" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Ubicación</label>
+                        <input type="text" class="form-control" id="f_ubicacion">
+                    </div>
+                `;
+            } else if (currentView === 'movimientos-inventario') {
+                const inventariosOpts = allInventarios.map(i => `<option value="${i.idInventario}">${i.repuesto ? i.repuesto.nombre : 'ID:' + i.idRepuesto} — ${i.sucursal ? i.sucursal.nombre : ''} (stock: ${i.stockActual})</option>`).join('');
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Inventario</label>
+                        <select class="form-control" id="f_idInventario" required>
+                            <option value="">Seleccione registro de inventario</option>
+                            ${inventariosOpts}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de movimiento</label>
+                        <select class="form-control" id="f_tipo" required>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Salida">Salida</option>
+                            <option value="Ajuste">Ajuste (fija el stock al valor indicado)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" class="form-control" id="f_cantidad" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Motivo</label>
+                        <input type="text" class="form-control" id="f_motivo">
+                    </div>
+                `;
             }
         }
 
@@ -802,6 +1342,51 @@
                 body.nit = document.getElementById('f_nit').value;
                 body.telefono = document.getElementById('f_telefono').value;
                 body.email = document.getElementById('f_email').value;
+            } else if (currentView === 'clientes') {
+                body.nombreCompleto = document.getElementById('f_nombreCompleto').value;
+                body.ci_nit = document.getElementById('f_ci_nit').value;
+                body.telefono = document.getElementById('f_telefono').value;
+                body.direccion = document.getElementById('f_direccion').value;
+            } else if (currentView === 'vehiculos') {
+                body.idCliente = parseInt(document.getElementById('f_idCliente').value, 10);
+                body.idModelo = parseInt(document.getElementById('f_idModelo').value, 10);
+                body.placa = document.getElementById('f_placa').value;
+                body.anio = parseInt(document.getElementById('f_anio').value, 10);
+                body.color = document.getElementById('f_color').value;
+                body.kilometraje = parseInt(document.getElementById('f_kilometraje').value || 0, 10);
+            } else if (currentView === 'citas') {
+                body.idCliente = parseInt(document.getElementById('f_idCliente').value, 10);
+                body.idVehiculo = parseInt(document.getElementById('f_idVehiculo').value, 10);
+                const idMec = document.getElementById('f_idMecanico').value;
+                body.idMecanico = idMec ? parseInt(idMec, 10) : null;
+                body.fecha = document.getElementById('f_fecha').value;
+                body.hora = document.getElementById('f_hora').value;
+                body.estado = document.getElementById('f_estado').value;
+                body.motivo = document.getElementById('f_motivo').value;
+            } else if (currentView === 'mecanicos') {
+                body.nombreCompleto = document.getElementById('f_nombreCompleto').value;
+                body.ci = document.getElementById('f_ci').value;
+                body.telefono = document.getElementById('f_telefono').value;
+                body.idSucursal = parseInt(document.getElementById('f_idSucursal').value, 10);
+                body.especialidades = Array.from(document.querySelectorAll('.f_especialidad:checked')).map(cb => parseInt(cb.value, 10));
+            } else if (currentView === 'repuestos') {
+                body.codigo = document.getElementById('f_codigo').value;
+                body.nombre = document.getElementById('f_nombre').value;
+                body.marca = document.getElementById('f_marca').value;
+                body.precioVenta = parseFloat(document.getElementById('f_precioVenta').value);
+                const idProv = document.getElementById('f_idProveedor').value;
+                body.idProveedor = idProv ? parseInt(idProv, 10) : null;
+            } else if (currentView === 'inventario') {
+                body.idRepuesto = parseInt(document.getElementById('f_idRepuesto').value, 10);
+                body.idSucursal = parseInt(document.getElementById('f_idSucursal').value, 10);
+                body.stockActual = parseInt(document.getElementById('f_stockActual').value || 0, 10);
+                body.stockMinimo = parseInt(document.getElementById('f_stockMinimo').value || 0, 10);
+                body.ubicacion = document.getElementById('f_ubicacion').value;
+            } else if (currentView === 'movimientos-inventario') {
+                body.idInventario = parseInt(document.getElementById('f_idInventario').value, 10);
+                body.tipo = document.getElementById('f_tipo').value;
+                body.cantidad = parseInt(document.getElementById('f_cantidad').value, 10);
+                body.motivo = document.getElementById('f_motivo').value;
             }
 
             const res = await fetch(url, {
@@ -855,6 +1440,20 @@
                     return d.nombre.toLowerCase().includes(query);
                 } else if (currentView === 'proveedores') {
                     return d.razonSocial.toLowerCase().includes(query) || d.nit.toLowerCase().includes(query);
+                } else if (currentView === 'clientes') {
+                    return d.nombreCompleto.toLowerCase().includes(query) || d.ci_nit.toLowerCase().includes(query);
+                } else if (currentView === 'vehiculos') {
+                    return d.placa.toLowerCase().includes(query) || (d.cliente && d.cliente.nombreCompleto.toLowerCase().includes(query));
+                } else if (currentView === 'citas') {
+                    return (d.cliente && d.cliente.nombreCompleto.toLowerCase().includes(query)) || (d.vehiculo && d.vehiculo.placa.toLowerCase().includes(query));
+                } else if (currentView === 'mecanicos') {
+                    return d.nombreCompleto.toLowerCase().includes(query) || d.ci.toLowerCase().includes(query);
+                } else if (currentView === 'repuestos') {
+                    return d.codigo.toLowerCase().includes(query) || d.nombre.toLowerCase().includes(query);
+                } else if (currentView === 'inventario') {
+                    return (d.repuesto && d.repuesto.nombre.toLowerCase().includes(query)) || (d.sucursal && d.sucursal.nombre.toLowerCase().includes(query));
+                } else if (currentView === 'movimientos-inventario') {
+                    return (d.inventario && d.inventario.repuesto && d.inventario.repuesto.nombre.toLowerCase().includes(query)) || d.tipo.toLowerCase().includes(query);
                 }
                 return true;
             });
@@ -876,7 +1475,7 @@
         
         // Read the URL path to load the correct view
         const initialPath = window.location.pathname.replace(/^\/|\/$/g, '');
-        const validViews = ['panel', 'usuarios', 'roles', 'permisos', 'servicios', 'tipos-servicio', 'proveedores'];
+        const validViews = ['panel', 'usuarios', 'roles', 'permisos', 'servicios', 'tipos-servicio', 'proveedores', 'clientes', 'vehiculos', 'citas', 'mecanicos', 'repuestos', 'inventario', 'movimientos-inventario'];
         
         if (initialPath && validViews.includes(initialPath)) {
             switchView(initialPath, false); // false = don't pushState on initial load
