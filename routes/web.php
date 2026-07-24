@@ -51,6 +51,28 @@ Route::get('/', function () {
             'contrasena'    => \Illuminate\Support\Facades\Hash::make('Encargado@2024'),
             'estado'        => 1
         ]);
+
+        // Cliente
+        $rolCliente = \App\Models\Rol::create([
+            'nombre'      => 'Cliente',
+            'descripcion' => 'Acceso al portal de cliente'
+        ]);
+
+        $usuarioCliente = \App\Models\Usuario::create([
+            'idRol'         => $rolCliente->idRol,
+            'nombreUsuario' => 'cliente1',
+            'email'         => 'cliente@correo.com',
+            'contrasena'    => \Illuminate\Support\Facades\Hash::make('Cliente123'),
+            'estado'        => 1
+        ]);
+
+        \App\Models\Cliente::create([
+            'idUsuario'      => $usuarioCliente->idUsuario,
+            'nombreCompleto' => 'Juan Pérez (Cliente Demo)',
+            'ci_nit'         => '1234567',
+            'telefono'       => '70000000',
+            'direccion'      => 'Av. Principal #123'
+        ]);
     }
     return view('welcome');
 });

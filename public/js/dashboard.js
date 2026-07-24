@@ -388,6 +388,12 @@
                     const user = await res.json();
                     const initial = user.nombreUsuario ? user.nombreUsuario.substring(0, 1).toUpperCase() : '?';
                     
+                    const landingScreen = document.getElementById('landingScreen');
+                    if (landingScreen) {
+                        landingScreen.style.display = 'none';
+                        landingScreen.classList.add('hidden');
+                    }
+
                     avatarLetter.textContent = initial;
                     headerAvatar.textContent = initial;
                     profileName.textContent = user.nombreUsuario;

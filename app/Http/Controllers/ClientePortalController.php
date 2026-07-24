@@ -18,7 +18,20 @@ class ClientePortalController extends Controller
     {
         $user = Auth::user();
         if (!$user) return null;
-        return Cliente::where('idUsuario', $user->idUsuario)->first();
+        
+        $cliente = Cliente::where('idUsuario', $user->idUsuario)->first();
+        if (!$cliente) {
+            $user->load('rol');
+            if ($user->rol && $user->rol->nombre === 'Cliente') {
+                $cliente = Cliente::create([
+                    'idUsuario'      => $user->idUsuario,
+                    'nombreCompleto' => $user->nombreUsuario,
+                    'telefono'       => '',
+                    'direccion'      => ''
+                ]);
+            }
+        }
+        return $cliente;
     }
 
     public function getProfile()

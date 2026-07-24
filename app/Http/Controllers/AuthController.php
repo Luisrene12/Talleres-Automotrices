@@ -14,10 +14,11 @@ class AuthController extends Controller
             'contrasena' => 'required|string',
         ]);
 
-        $field = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'nombreUsuario';
+        $loginInput = trim($credentials['login']);
+        $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'nombreUsuario';
 
         if (Auth::attempt([
-            $field    => $credentials['login'],
+            $field    => $loginInput,
             'password' => $credentials['contrasena']
         ])) {
             $request->session()->regenerate();
