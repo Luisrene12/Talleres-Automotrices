@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+<<<<<<< HEAD
 /**
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
+=======
+>>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 class Cliente extends Model
 {
     protected $table = 'cliente';
@@ -30,9 +33,12 @@ class Cliente extends Model
     {
         return $this->hasMany(OrdenTrabajo::class, 'idCliente', 'idCliente');
     }
+<<<<<<< HEAD
 
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'idUsuario', 'idUsuario');
     }
+=======
+>>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 }

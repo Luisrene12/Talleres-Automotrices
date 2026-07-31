@@ -142,6 +142,7 @@ class ClientePortalController extends Controller
 
         return response()->json(['message' => 'Solicitud creada con éxito', 'orden' => $orden], 201);
     }
+<<<<<<< HEAD
 
     // FASE 3.A: Portal Cliente - Estado actual de sus vehículos en taller
     public function getEstadoVehiculo()
@@ -205,4 +206,6 @@ class ClientePortalController extends Controller
 
         return response()->json($notificaciones);
     }
+=======
+>>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 }
