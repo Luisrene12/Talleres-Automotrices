@@ -15,11 +15,8 @@ class Mecanico extends Model
         'ci',
         'telefono',
         'idSucursal',
-<<<<<<< HEAD
         'idUsuario',
         'disponible',
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     ];
 
     public function sucursal()
@@ -36,12 +33,9 @@ class Mecanico extends Model
     {
         return $this->hasMany(OrdenTrabajo::class, 'idMecanico', 'idMecanico');
     }
-<<<<<<< HEAD
 
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'idUsuario', 'idUsuario');
     }
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 }

@@ -430,7 +430,133 @@ function seleccionarVehiculoOrden(idVehiculo, placa) {
 }
 
 function abrirModalNuevoVehiculo() {
-    alert('Funcionalidad de registrar nuevo vehículo en desarrollo. Usa el módulo de Vehículos desde el panel de administrador.');
+    if (!rpClienteSeleccionado) {
+        if (typeof triggerToast === 'function') triggerToast('Selecciona un cliente primero');
+        return;
+    }
+
+    const existingModal = document.getElementById('rp-modal-nuevo-vehiculo');
+    if (existingModal) existingModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'rp-modal-nuevo-vehiculo';
+    modal.style.cssText = 'position:fixed; inset:0; z-index:1150; display:flex; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,.72); backdrop-filter:blur(5px);';
+    modal.innerHTML = `
+        <div style="width:min(100%, 520px); max-height:90vh; overflow-y:auto; background:#071613; border:1px solid rgba(182,242,74,.22); border-radius:18px; padding:1.5rem; font-family:'Outfit',sans-serif; box-shadow:0 24px 60px rgba(0,0,0,.45);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem;">
+                <div>
+                    <h3 style="color:#fff; font-size:1.2rem; font-weight:800; margin:0;">Registrar vehículo</h3>
+                    <p style="color:var(--text-muted,#5f9c92); font-size:.82rem; margin:.3rem 0 0;">Cliente: ${escapeHtmlRecep(rpClienteSeleccionado.nombreCompleto)}</p>
+                </div>
+                <button type="button" id="rp-cerrar-vehiculo" class="op-btn-ghost" style="padding:.35rem .65rem;" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="rp-form-nuevo-vehiculo">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div style="grid-column:1/-1;">
+                        <label style="color:var(--text-secondary,#9db8b0); font-size:.82rem; font-weight:600; display:block; margin-bottom:.4rem;">Modelo *</label>
+                        <select id="rp-vehiculo-modelo" required style="width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; outline:none;">
+                            <option value="">Cargando modelos...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color:var(--text-secondary,#9db8b0); font-size:.82rem; font-weight:600; display:block; margin-bottom:.4rem;">Placa *</label>
+                        <input id="rp-vehiculo-placa" required maxlength="15" placeholder="Ej: ABC123" style="width:100%; box-sizing:border-box; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; outline:none; text-transform:uppercase;">
+                    </div>
+                    <div>
+                        <label style="color:var(--text-secondary,#9db8b0); font-size:.82rem; font-weight:600; display:block; margin-bottom:.4rem;">Año *</label>
+                        <input id="rp-vehiculo-anio" type="number" required min="1900" max="${new Date().getFullYear() + 1}" placeholder="Ej: 2022" style="width:100%; box-sizing:border-box; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; outline:none;">
+                    </div>
+                    <div>
+                        <label style="color:var(--text-secondary,#9db8b0); font-size:.82rem; font-weight:600; display:block; margin-bottom:.4rem;">Color</label>
+                        <input id="rp-vehiculo-color" maxlength="30" placeholder="Ej: Blanco" style="width:100%; box-sizing:border-box; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; outline:none;">
+                    </div>
+                    <div>
+                        <label style="color:var(--text-secondary,#9db8b0); font-size:.82rem; font-weight:600; display:block; margin-bottom:.4rem;">Kilometraje</label>
+                        <input id="rp-vehiculo-kilometraje" type="number" min="0" value="0" style="width:100%; box-sizing:border-box; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; border-radius:10px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; outline:none;">
+                    </div>
+                </div>
+                <div id="rp-vehiculo-error" style="display:none; margin-top:1rem; color:#fca5a5; font-size:.82rem;"></div>
+                <div style="display:flex; justify-content:flex-end; gap:.75rem; margin-top:1.25rem;">
+                    <button type="button" id="rp-cancelar-vehiculo" class="op-btn-ghost">Cancelar</button>
+                    <button type="submit" class="op-btn-primary"><i class="fa-solid fa-car"></i> Registrar vehículo</button>
+                </div>
+            </form>
+        </div>`;
+
+    document.body.appendChild(modal);
+    document.getElementById('rp-cerrar-vehiculo').addEventListener('click', () => modal.remove());
+    document.getElementById('rp-cancelar-vehiculo').addEventListener('click', () => modal.remove());
+    cargarModelosParaRecepcion();
+    document.getElementById('rp-form-nuevo-vehiculo').addEventListener('submit', async event => {
+        event.preventDefault();
+        await guardarVehiculoRecepcion(modal);
+    });
+}
+
+function escapeHtmlRecep(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[character]));
+}
+
+async function cargarModelosParaRecepcion() {
+    const select = document.getElementById('rp-vehiculo-modelo');
+    if (!select) return;
+
+    try {
+        const response = await apiFetch('/api/modelos-vehiculo');
+        if (!response.ok) throw new Error('No se pudieron cargar los modelos.');
+        const modelos = await response.json();
+        select.innerHTML = '<option value="">Selecciona un modelo</option>' + modelos.map(modelo => {
+            const marca = modelo.marca?.nombre ? `${modelo.marca.nombre} ` : '';
+            return `<option value="${modelo.idModelo}">${escapeHtmlRecep(marca + modelo.nombre)}</option>`;
+        }).join('');
+    } catch (error) {
+        select.innerHTML = '<option value="">No se pudieron cargar los modelos</option>';
+        mostrarErrorVehiculoRecepcion(error.message);
+    }
+}
+
+async function guardarVehiculoRecepcion(modal) {
+    const payload = {
+        idCliente: rpClienteSeleccionado.idCliente,
+        idModelo: parseInt(document.getElementById('rp-vehiculo-modelo').value, 10),
+        placa: document.getElementById('rp-vehiculo-placa').value.trim().toUpperCase(),
+        anio: parseInt(document.getElementById('rp-vehiculo-anio').value, 10),
+        color: document.getElementById('rp-vehiculo-color').value.trim() || null,
+        kilometraje: parseInt(document.getElementById('rp-vehiculo-kilometraje').value || 0, 10)
+    };
+
+    try {
+        const response = await apiFetch('/api/vehiculos', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            const validationMessage = data.errors ? Object.values(data.errors).flat().join(' ') : data.message;
+            throw new Error(validationMessage || 'No se pudo registrar el vehículo.');
+        }
+
+        modal.remove();
+        await cargarVehiculosDeCliente(rpClienteSeleccionado.idCliente);
+        seleccionarVehiculoOrden(data.idVehiculo, payload.placa);
+        if (typeof triggerToast === 'function') triggerToast('Vehículo registrado correctamente');
+    } catch (error) {
+        mostrarErrorVehiculoRecepcion(error.message);
+    }
+}
+
+function mostrarErrorVehiculoRecepcion(message) {
+    const errorElement = document.getElementById('rp-vehiculo-error');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    } else if (typeof triggerToast === 'function') {
+        triggerToast(message);
+    }
 }
 
 async function crearOrden() {

@@ -14,7 +14,7 @@ class UpdateEstadoOrdenRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'etapa' => 'required|in:Recibido,Diagnóstico,En reparación,Terminado',
+            'etapa' => 'required|string',
         ];
     }
 }

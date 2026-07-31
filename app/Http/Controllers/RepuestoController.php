@@ -7,9 +7,23 @@ use Illuminate\Http\Request;
 
 class RepuestoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Repuesto::with('proveedor')->get());
+        $query = Repuesto::with(['proveedor', 'inventarios']);
+        
+        if ($request->has('q') && !empty($request->q)) {
+            $search = $request->q;
+            $query->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('codigo', 'like', "%{$search}%");
+        }
+
+        $repuestos = $query->get()->map(function ($repuesto) {
+            $repuesto->stockActual = $repuesto->inventarios->sum('stockActual');
+            $repuesto->precio = $repuesto->precioVenta;
+            return $repuesto;
+        });
+
+        return response()->json($repuestos);
     }
 
     public function store(Request $request)

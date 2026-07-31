@@ -10,16 +10,46 @@ class OrdenTrabajoController extends Controller
     public function index(Request $request)
     {
         $query = OrdenTrabajo::with([
-            'cliente:idCliente,nombreCompleto,ci_nit,telefono',
-            'vehiculo:idVehiculo,placa,marca,modelo',
-            'mecanico:idMecanico,nombreCompleto,especialidad'
+            'cliente',
+            'vehiculo.modelo.marca',
+            'mecanico'
         ]);
 
-        if ($request->has('page')) {
-            return response()->json($query->latest('idOrdenTrabajo')->paginate(30));
+        if ($request->query('disponibles')) {
+            $query->whereNull('idMecanico')
+                  ->where(function($q) {
+                      $q->whereIn('estado', ['Recibido', 'recibido', 'Pendiente', 'pendiente', 'Disponible', 'disponible'])
+                        ->orWhereNull('estado')
+                        ->orWhere('estado', '');
+                  });
         }
 
-        return response()->json($query->latest('idOrdenTrabajo')->get());
+        if ($request->query('mis')) {
+            $user = $request->user();
+            if ($user) {
+                $mecanico = \App\Models\Mecanico::where('idUsuario', $user->idUsuario)->first();
+                if ($mecanico) {
+                    $query->where('idMecanico', $mecanico->idMecanico);
+                }
+            }
+        }
+
+        $ordenes = $query->latest('idOrden')->get()->map(function ($orden) {
+            if ($orden->vehiculo) {
+                $orden->vehiculo->marca = $orden->vehiculo->modelo->marca->nombre ?? '';
+                $orden->vehiculo->modelo_nombre = $orden->vehiculo->modelo->nombre ?? '';
+                $orden->vehiculo->modelo = $orden->vehiculo->modelo_nombre;
+            }
+            return $orden;
+        });
+
+        if ($request->has('page')) {
+            // Paginate is harder to map like this without losing pagination meta.
+            // For now just return the mapped collection or rely on JS.
+            return response()->json($query->latest('idOrden')->paginate(30)); 
+        }
+
+        return response()->json($ordenes);
     }
 
     public function store(\App\Http\Requests\StoreOrdenTrabajoRequest $request)
@@ -34,7 +64,12 @@ class OrdenTrabajoController extends Controller
 
     public function show($id)
     {
-        $item = OrdenTrabajo::with(['cliente', 'vehiculo', 'mecanico'])->findOrFail($id);
+        $item = OrdenTrabajo::with(['cliente', 'vehiculo.modelo.marca', 'mecanico'])->findOrFail($id);
+        if ($item->vehiculo) {
+            $item->vehiculo->marca = $item->vehiculo->modelo->marca->nombre ?? '';
+            $item->vehiculo->modelo_nombre = $item->vehiculo->modelo->nombre ?? '';
+            $item->vehiculo->modelo = $item->vehiculo->modelo_nombre;
+        }
         return response()->json($item);
     }
 
@@ -59,9 +94,10 @@ class OrdenTrabajoController extends Controller
         $validated = $request->validated();
         
         $orden->estado = $validated['etapa'];
+        $orden->etapa = $validated['etapa'];
         
         if ($validated['etapa'] === 'Terminado') {
-            $orden->fechaSalida = now();
+            $orden->horaFinReal = now();
         }
 
         $orden->save();
@@ -77,7 +113,16 @@ class OrdenTrabajoController extends Controller
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
         $mecanico = \App\Models\Mecanico::where('idUsuario', $user->idUsuario)->first();
-        if (!$mecanico) return response()->json(['message' => 'No es un mecánico válido'], 403);
+        if (!$mecanico) {
+            // Auto-crear perfil de mecánico si el usuario tiene el rol pero no existe en la tabla mecanico
+            $mecanico = \App\Models\Mecanico::create([
+                'idUsuario' => $user->idUsuario,
+                'nombreCompleto' => $user->nombreUsuario ?? 'Mecánico Auto',
+                'ci' => 'CI-' . $user->idUsuario . rand(100,999),
+                'idSucursal' => 1, // Por defecto
+                'disponible' => 1
+            ]);
+        }
 
         // Opcional: validar que no tenga otra orden activa o que esté disponible
         if ($orden->idMecanico && $orden->idMecanico !== $mecanico->idMecanico) {

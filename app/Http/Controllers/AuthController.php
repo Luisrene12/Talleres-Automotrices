@@ -17,19 +17,12 @@ class AuthController extends Controller
         $loginInput = trim($credentials['login']);
         $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'nombreUsuario';
 
-<<<<<<< HEAD
         $authAttempt = Auth::attempt([
             $field    => $loginInput,
             'password' => $credentials['contrasena']
         ]);
 
         if ($authAttempt) {
-=======
-        if (Auth::attempt([
-            $field    => $loginInput,
-            'password' => $credentials['contrasena']
-        ])) {
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
             $request->session()->regenerate();
 
             return response()->json([

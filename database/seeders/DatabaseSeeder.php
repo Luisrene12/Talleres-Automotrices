@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use App\Models\User;
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< HEAD
         $this->call([
             RolSeeder::class,
             PermisoSeeder::class,
@@ -45,8 +40,5 @@ class DatabaseSeeder extends Seeder
             PagoSeeder::class,
             MovimientoInventarioSeeder::class,
         ]);
-=======
-        // Seeders del proyecto van aquí
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     }
 }

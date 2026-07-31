@@ -3,12 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-<<<<<<< HEAD
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-<<<<<<< HEAD
         // Rate Limiter: Login
         RateLimiter::for('login-attempts', function (Request $request) {
             return Limit::perMinute(5)
@@ -58,8 +54,5 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)
                 ->by($request->user()?->idUsuario ?: $request->ip());
         });
-=======
-        //
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     }
 }

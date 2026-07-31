@@ -21,37 +21,23 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="menu-section-title admin-only">Gestión de accesos</div>
 
         <div class="menu-item admin-only" id="nav-usuarios" onclick="switchView('usuarios')">
-=======
-        <div class="menu-section-title">Gestión de accesos</div>
-
-        <div class="menu-item" id="nav-usuarios" onclick="switchView('usuarios')">
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
             <div class="menu-item-label">
                 <i class="fa-solid fa-users"></i>
                 <span>Usuarios</span>
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="menu-item admin-only" id="nav-roles" onclick="switchView('roles')">
-=======
-        <div class="menu-item" id="nav-roles" onclick="switchView('roles')">
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
             <div class="menu-item-label">
                 <i class="fa-solid fa-shield-halved"></i>
                 <span>Roles</span>
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="menu-item admin-only" id="nav-permisos" onclick="switchView('permisos')">
-=======
-        <div class="menu-item" id="nav-permisos" onclick="switchView('permisos')">
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
             <div class="menu-item-label">
                 <i class="fa-solid fa-key"></i>
                 <span>Permisos</span>
@@ -83,7 +69,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="menu-section-title">Clientes y Vehículos</div>
 
         <div class="menu-item" id="nav-clientes" onclick="switchView('clientes')">
@@ -188,8 +173,6 @@
             </div>
         </div>
 
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     </div>
 
     <!-- Sidebar Profile Footer -->

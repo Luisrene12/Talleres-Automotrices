@@ -12,25 +12,19 @@
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<<<<<<< HEAD
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-=======
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Estilos del Dashboard y 3D -->
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/client.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
-<<<<<<< HEAD
+     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}?v={{ filemtime(public_path('css/dashboard.css')) }}">
+     <link rel="stylesheet" href="{{ asset('css/client.css') }}?v={{ filemtime(public_path('css/client.css')) }}">
+     <link rel="stylesheet" href="{{ asset('css/landing.css') }}?v={{ filemtime(public_path('css/landing.css')) }}">
     
     <!-- Fuentes operativas -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- CSS operativo (después de dashboard.css) -->
-    <link rel="stylesheet" href="{{ asset('css/operativo.css') }}">
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
+     <!-- CSS operativo (después de dashboard.css) -->
+     <link rel="stylesheet" href="{{ asset('css/operativo.css') }}?v={{ filemtime(public_path('css/operativo.css')) }}">
 </head>
 <body>
 
@@ -60,35 +54,24 @@
     @include('partials.client_dashboard')
 
     {{-- ================================================
-<<<<<<< HEAD
          PORTALES OPERATIVOS (Recepcionista y Mecánico)
     ================================================ --}}
     @include('partials.recepcion')
     @include('partials.mecanico')
 
     {{-- ================================================
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
          MODALES Y NOTIFICACIONES
     ================================================ --}}
     @include('partials.modals')
 
     <!-- Bootstrap 5 Bundle JS -->
-<<<<<<< HEAD
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
-    <!-- Lógica principal de la aplicación -->
-    <script defer src="{{ asset('js/dashboard.js') }}"></script>
-    <script defer src="{{ asset('js/client.js') }}"></script>
-    <script defer src="{{ asset('js/recepcion.js') }}"></script>
-    <script defer src="{{ asset('js/mecanico.js') }}"></script>
-=======
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-    <!-- Lógica principal de la aplicación -->
-    <script src="{{ asset('js/dashboard.js') }}"></script>
-    <script src="{{ asset('js/client.js') }}"></script>
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
+     <!-- Lógica principal de la aplicación -->
+     <script defer src="{{ asset('js/dashboard.js') }}?v={{ filemtime(public_path('js/dashboard.js')) }}"></script>
+     <script defer src="{{ asset('js/client.js') }}?v={{ filemtime(public_path('js/client.js')) }}"></script>
+     <script defer src="{{ asset('js/recepcion.js') }}?v={{ filemtime(public_path('js/recepcion.js')) }}"></script>
+     <script defer src="{{ asset('js/mecanico.js') }}?v={{ filemtime(public_path('js/mecanico.js')) }}"></script>
 
 </body>
 </html>

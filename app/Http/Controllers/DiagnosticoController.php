@@ -7,14 +7,30 @@ use App\Models\Diagnostico;
 
 class DiagnosticoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Diagnostico::all());
+        $query = Diagnostico::query();
+        if ($request->has('idOrden')) {
+            $query->where('idOrden', $request->idOrden);
+        }
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
     {
-        $item = Diagnostico::create($request->all());
+        $data = $request->all();
+        
+        $especialidadesStr = '';
+        if (isset($data['especialidades']) && is_array($data['especialidades'])) {
+            $especialidadesStr = implode(', ', $data['especialidades']);
+        }
+        $severidad = $data['severidad'] ?? 'Media';
+        
+        // Guardamos todo en descripcion por si no existen las columnas en BD
+        $descAdicional = "\n\nEspecialidades: {$especialidadesStr}\nSeveridad: {$severidad}";
+        $data['descripcion'] = ($data['descripcion'] ?? '') . $descAdicional;
+        
+        $item = Diagnostico::create($data);
         return response()->json($item, 201);
     }
 

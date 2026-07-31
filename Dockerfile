@@ -7,13 +7,14 @@ RUN apk add --no-cache \
     libpng-dev \
     oniguruma-dev \
     libxml2-dev \
+    postgresql-dev \
     zip \
     unzip \
     libzip-dev \
     $PHPIZE_DEPS
 
 # Instalar extensiones de PHP necesarias para Laravel
-RUN docker-php-ext-install pdo_mysql mbstring pcntl bcmath gd zip \
+RUN docker-php-ext-install pdo_pgsql pdo_mysql mbstring pcntl bcmath gd zip \
     && pecl install redis && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
 
@@ -28,6 +29,9 @@ COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Copiar el código fuente existente al contenedor
 COPY . .
+
+# Instalar las dependencias PHP dentro de la imagen
+RUN composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader
 
 # Dar permisos a las carpetas críticas de Laravel
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache

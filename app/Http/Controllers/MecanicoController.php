@@ -91,7 +91,15 @@ class MecanicoController extends Controller
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
         $mecanico = Mecanico::where('idUsuario', $user->idUsuario)->first();
-        if (!$mecanico) return response()->json(['message' => 'Mecánico no encontrado para este usuario'], 404);
+        if (!$mecanico) {
+            $mecanico = Mecanico::create([
+                'idUsuario' => $user->idUsuario,
+                'nombreCompleto' => $user->nombreUsuario ?? 'Mecánico Auto',
+                'ci' => 'CI-' . $user->idUsuario . rand(100,999),
+                'idSucursal' => 1,
+                'disponible' => 1
+            ]);
+        }
 
         $mecanico->disponible = !$mecanico->disponible;
         $mecanico->save();

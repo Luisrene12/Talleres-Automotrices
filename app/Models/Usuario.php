@@ -5,12 +5,9 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-<<<<<<< HEAD
 /**
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 class Usuario extends Authenticatable
 {
     use Notifiable;

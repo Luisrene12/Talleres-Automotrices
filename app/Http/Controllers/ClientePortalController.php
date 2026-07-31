@@ -78,7 +78,7 @@ class ClientePortalController extends Controller
         if ($user->email !== $request->email) {
             $existingUser = Usuario::where('email', $request->email)->where('idUsuario', '!=', $user->idUsuario)->first();
             if ($existingUser) {
-                return response()->json(['message' => 'El correo electrónico ya está en uso'], 400);
+                return response()->json(['message' => 'El correo electr-nico ya est- en uso'], 400);
             }
             $user->email = $request->email;
         }
@@ -131,7 +131,7 @@ class ClientePortalController extends Controller
             return response()->json(['message' => 'Servicio no encontrado'], 404);
         }
 
-        // Crear Orden de Trabajo sin Vehículo ni Mecánico
+        // Crear Orden de Trabajo sin Vehículo ni Mec-nico
         $orden = new OrdenTrabajo();
         $orden->idCliente = $cliente->idCliente;
         $orden->fechaIngreso = date('Y-m-d');
@@ -142,7 +142,6 @@ class ClientePortalController extends Controller
 
         return response()->json(['message' => 'Solicitud creada con éxito', 'orden' => $orden], 201);
     }
-<<<<<<< HEAD
 
     // FASE 3.A: Portal Cliente - Estado actual de sus vehículos en taller
     public function getEstadoVehiculo()
@@ -157,7 +156,7 @@ class ClientePortalController extends Controller
             ->map(function ($orden) {
                 return [
                     'idOrden' => $orden->idOrden,
-                    'placa' => $orden->vehiculo ? $orden->vehiculo->placa : 'Sin vehículo',
+                    'placa' => $orden->vehiculo ? $orden->vehiculo->placa : 'Sin veh-culo',
                     'estado' => $orden->estado,
                     'mecanico' => $orden->mecanico ? $orden->mecanico->nombreCompleto : 'Sin asignar',
                     'fechaIngreso' => $orden->fechaIngreso,
@@ -173,7 +172,7 @@ class ClientePortalController extends Controller
         return match ($estado) {
             'Recibido' => 25,
             'Diagnóstico' => 50,
-            'En reparación' => 75,
+            'En reparaci-n' => 75,
             'Terminado', 'Completado' => 100,
             default => 0,
         };
@@ -206,6 +205,4 @@ class ClientePortalController extends Controller
 
         return response()->json($notificaciones);
     }
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 }

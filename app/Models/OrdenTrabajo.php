@@ -4,12 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-<<<<<<< HEAD
 /**
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 class OrdenTrabajo extends Model
 {
     protected $table = 'ordentrabajo';
@@ -25,15 +22,12 @@ class OrdenTrabajo extends Model
         'estado',
         'diagnostico',
         'total',
-<<<<<<< HEAD
         'horaInicio',
         'horaFinEstimada',
         'horaFinReal',
         'etapa',
         'sucursal',
         'servicioSolicitado'
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
     ];
 
     public function cliente()
@@ -45,12 +39,9 @@ class OrdenTrabajo extends Model
     {
         return $this->belongsTo(Mecanico::class, 'idMecanico', 'idMecanico');
     }
-<<<<<<< HEAD
 
     public function vehiculo()
     {
         return $this->belongsTo(Vehiculo::class, 'idVehiculo', 'idVehiculo');
     }
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
 }

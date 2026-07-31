@@ -18,6 +18,20 @@ class MovimientoInventarioController extends Controller
 
     public function store(Request $request)
     {
+        // Soporte para request desde el portal de mecánico
+        if ($request->tipo === 'uso') {
+            $request->merge([
+                'tipo' => 'Salida',
+                'motivo' => 'Uso en orden de trabajo #' . $request->idOrden
+            ]);
+            if ($request->has('idRepuesto')) {
+                $inventario = Inventario::where('idRepuesto', $request->idRepuesto)->first();
+                if ($inventario) {
+                    $request->merge(['idInventario' => $inventario->idInventario]);
+                }
+            }
+        }
+
         $validated = $request->validate([
             'idInventario' => 'required|integer|exists:inventario,idInventario',
             'tipo' => 'required|in:Entrada,Salida,Ajuste',

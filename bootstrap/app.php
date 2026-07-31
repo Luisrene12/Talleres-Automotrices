@@ -17,10 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Alias para proteger rutas API que requieren sesión activa
         $middleware->alias([
             'auth.session' => \App\Http\Middleware\EnsureSessionAuthenticated::class,
-<<<<<<< HEAD
             'role'         => \App\Http\Middleware\CheckRole::class,
-=======
->>>>>>> 43ff2de7940d8b9d579126fd0270cc0bea397d44
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

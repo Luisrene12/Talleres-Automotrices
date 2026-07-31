@@ -26,7 +26,6 @@ function initMecanicoPortal() {
     buildDiagnosticoChips();
     switchMecTab('bandeja');
     loadBandeja();
-    loadRepuestos('');
 }
 
 function switchMecTab(tab, idOrden = null) {
@@ -37,15 +36,13 @@ function switchMecTab(tab, idOrden = null) {
     const activeButton = document.getElementById(`mp-nav-${tab}`);
     if (activeButton) activeButton.classList.add('active');
 
-    if (tab === 'orden' && idOrden) {
+    if (tab === 'workspace' && idOrden) {
+        document.getElementById('mp-nav-workspace').style.display = 'inline-flex';
+        document.getElementById('mp-ws-tab-title').textContent = `Orden #${idOrden}`;
         loadOrdenDetalle(idOrden);
-    } else if (tab === 'diagnostico') {
-        if (mpAsignadas.length) {
-            populateOrdenSelects(mpAsignadas);
-            loadDiagnostico(mpAsignadas[0].idOrden || mpAsignadas[0].id);
-        }
-    } else if (tab === 'repuestos') {
-        loadRepuestos(document.getElementById('mp-rep-search')?.value || '');
+    } else if (tab === 'bandeja') {
+        document.getElementById('mp-nav-workspace').style.display = 'none';
+        loadBandeja();
     }
 }
 
@@ -70,7 +67,6 @@ async function loadBandeja() {
 
         renderDisponibles(mpDisponibles);
         renderAsignadas(mpAsignadas);
-        populateOrdenSelects(mpAsignadas);
     } catch (error) {
         console.error('Error loading bandeja:', error);
         showBanner('No se pudo cargar la bandeja de órdenes.', 'danger');
@@ -113,7 +109,7 @@ function renderOrdenCard(tipo) {
         const urgente = tipo === 'asignadas' && index === 0;
         const action = tipo === 'disponibles'
             ? `<button class="op-btn-primary" onclick="aceptarOrden(${id})"><i class="fa-solid fa-check"></i> Aceptar</button>`
-            : `<button class="op-btn-ghost" onclick="switchMecTab('orden', ${id})"><i class="fa-solid fa-eye"></i> Ver orden</button>`;
+            : `<button class="op-btn-primary" onclick="switchMecTab('workspace', ${id})"><i class="fa-solid fa-eye"></i> Abrir Workspace</button>`;
 
         return `
             <div class="glass-card mp-order-card${urgente ? ' glow-lime' : ''}">
@@ -144,7 +140,7 @@ async function aceptarOrden(idOrden) {
         if (res.ok) {
             showBanner('✅ Orden aceptada correctamente.', 'success');
             await loadBandeja();
-            switchMecTab('bandeja');
+            switchMecTab('workspace', idOrden);
         } else {
             showBanner('No se pudo aceptar la orden.', 'danger');
         }
@@ -172,47 +168,41 @@ async function loadOrdenDetalle(idOrden) {
         if (title) title.textContent = `Orden #${idOrden}`;
         if (subtitle) subtitle.textContent = `${data.cliente?.nombreCompleto || '-'} · ${data.vehiculo?.placa || '-'}`;
         if (meta) {
+            const modeloNombre = data.vehiculo?.modelo_nombre || (typeof data.vehiculo?.modelo === 'string' ? data.vehiculo?.modelo : data.vehiculo?.modelo?.nombre) || '';
             meta.innerHTML = `
-                <div><i class="fa-solid fa-car"></i> ${data.vehiculo?.marca || ''} ${data.vehiculo?.modelo || ''}</div>
+                <div><i class="fa-solid fa-car"></i> ${data.vehiculo?.marca || ''} ${modeloNombre}</div>
                 <div><i class="fa-solid fa-user"></i> ${data.cliente?.nombreCompleto || '-'}</div>
-                <div><i class="fa-regular fa-clock"></i> ${data.fechaInicio || 'Sin fecha registrada'}</div>
+                <div><i class="fa-regular fa-clock"></i> Creada: ${data.fechaIngreso || 'Sin fecha registrada'}</div>
             `;
         }
 
         const etapaActual = data.etapa || data.estado || 'Recibido';
         renderStepper(etapaActual);
+        
+        await loadDiagnostico(idOrden);
+        document.getElementById('mp-rep-resultados').innerHTML = '<div class="mp-empty-state" style="padding:1rem;">Busca un repuesto para añadirlo a esta orden.</div>';
+        document.getElementById('mp-reg-uso-form').style.display = 'none';
+
     } catch (error) {
         console.error('Error loading orden detalle:', error);
     }
 }
 
 function renderStepper(etapaActual) {
-    const steps = ['Recibido', 'Diagnóstico', 'En reparación', 'Terminado'];
     const currentIndex = getStepIndex(etapaActual);
-    const container = document.getElementById('mp-stepper');
-
-    if (!container) return;
-
-    container.innerHTML = steps.map((step, index) => {
-        const done = index < currentIndex;
-        const active = index === currentIndex;
-        return `
-            <div class="op-step${active ? ' active' : ''}${done ? ' done' : ''}">
-                <div style="display:flex; flex-direction:column; align-items:center;">
-                    <div class="op-step-bubble">${index + 1}</div>
-                    <div class="op-step-label">${step}</div>
-                </div>
-                ${index < steps.length - 1 ? '<div class="op-step-line"></div>' : ''}
-            </div>
-        `;
-    }).join('');
-
     const avanceButton = document.getElementById('mp-btn-avanzar');
-    if (avanceButton) {
-        avanceButton.disabled = currentIndex >= steps.length - 1;
-        avanceButton.innerHTML = currentIndex >= steps.length - 1
-            ? '<i class="fa-solid fa-circle-check"></i> Orden finalizada'
-            : '<i class="fa-solid fa-forward-step"></i> Avanzar etapa';
+    const btnText = document.getElementById('mp-btn-avanzar-text');
+    if (avanceButton && btnText) {
+        avanceButton.disabled = currentIndex >= 3;
+        if (currentIndex === 0) btnText.textContent = 'Iniciar Diagnóstico';
+        else if (currentIndex === 1) btnText.textContent = 'Iniciar Reparación';
+        else if (currentIndex === 2) btnText.textContent = 'Terminar Reparación';
+        else btnText.textContent = 'Orden Finalizada';
+    }
+
+    const btnFinalizar = document.getElementById('mp-btn-finalizar');
+    if (btnFinalizar) {
+        btnFinalizar.style.display = currentIndex >= 3 ? 'none' : 'inline-flex';
     }
 }
 
@@ -225,7 +215,7 @@ function getStepIndex(etapa) {
 }
 
 async function avanzarEtapa() {
-    const idOrden = mpCurrentOrdenId || (mpAsignadas[0]?.idOrden || mpAsignadas[0]?.id);
+    const idOrden = mpCurrentOrdenId;
     if (!idOrden) return;
 
     const etapaActual = mpCurrentOrdenData?.etapa || mpCurrentOrdenData?.estado || 'Recibido';
@@ -249,7 +239,6 @@ async function avanzarEtapa() {
         if (res.ok) {
             showBanner(`✅ Etapa actualizada a ${nextEtapa}.`, 'success');
             await loadOrdenDetalle(idOrden);
-            await loadBandeja();
         } else {
             showBanner('No se pudo avanzar la etapa.', 'danger');
         }
@@ -275,7 +264,7 @@ function cerrarModalTerminado() {
 }
 
 async function confirmarTerminado() {
-    const idOrden = mpCurrentOrdenId || (mpAsignadas[0]?.idOrden || mpAsignadas[0]?.id);
+    const idOrden = mpCurrentOrdenId;
     if (!idOrden) return;
 
     try {
@@ -287,7 +276,6 @@ async function confirmarTerminado() {
             cerrarModalTerminado();
             showBanner('✅ Vehículo marcado como listo. Notificación enviada.', 'success');
             await loadOrdenDetalle(idOrden);
-            await loadBandeja();
         } else {
             showBanner('No se pudo marcar la orden como terminada.', 'danger');
         }
@@ -337,12 +325,11 @@ function toggleChip(value, element) {
 }
 
 async function loadDiagnostico(idOrden) {
-    const select = document.getElementById('mp-diag-orden');
-    if (select && idOrden) {
-        select.value = String(idOrden);
-    }
-
     try {
+        document.getElementById('mp-diag-desc').value = '';
+        document.querySelectorAll('.mp-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('input[name="mp-severity"][value="Media"]').checked = true;
+
         const res = await apiFetch(`/api/diagnosticos?idOrden=${idOrden}`);
         if (!res.ok) return;
 
@@ -366,7 +353,8 @@ async function loadDiagnostico(idOrden) {
 }
 
 async function guardarDiagnostico() {
-    const idOrden = document.getElementById('mp-diag-orden')?.value;
+    const idOrden = mpCurrentOrdenId;
+    if (!idOrden) return;
     const descripcion = document.getElementById('mp-diag-desc')?.value || '';
     const especialidades = Array.from(document.querySelectorAll('.mp-chip.active')).map(chip => chip.dataset.value);
     const severidad = document.querySelector('input[name="mp-severity"]:checked')?.value || 'Media';
@@ -387,6 +375,11 @@ async function guardarDiagnostico() {
 }
 
 async function loadRepuestos(query = '') {
+    if (!query.trim()) {
+        document.getElementById('mp-rep-resultados').innerHTML = '<div class="mp-empty-state" style="padding:1rem;">Escribe algo para buscar repuestos.</div>';
+        return;
+    }
+    
     try {
         const res = await apiFetch(`/api/repuestos?q=${encodeURIComponent(query)}`);
         if (!res.ok) return;
@@ -405,22 +398,25 @@ async function loadRepuestos(query = '') {
             const stock = repuesto.stock ?? repuesto.cantidad ?? repuesto.stockActual ?? 0;
             const estado = stock <= 0 ? 'Agotado' : stock <= 5 ? 'Bajo Stock' : 'En Stock';
             const precio = repuesto.precioUnitario ?? repuesto.precio ?? repuesto.precio_unitario ?? 0;
+            const nombre = JSON.stringify(repuesto.nombre || repuesto.descripcion || 'Repuesto').replace(/'/g, "&apos;");
+            const id = repuesto.idRepuesto || repuesto.id;
+            
             return `
-                <div class="glass-card mp-order-card">
-                    <div class="mp-order-head">
+                <div class="glass-card mp-order-card" style="margin-bottom:.75rem; padding:1rem;">
+                    <div class="mp-order-head" style="margin-bottom:.5rem;">
                         <div>
                             <div class="mp-order-title">${repuesto.nombre || repuesto.descripcion || 'Repuesto'}</div>
-                            <div class="mp-order-subtitle">${repuesto.codigo || repuesto.idRepuesto || '-'}</div>
+                            <div class="mp-order-subtitle">Código: ${repuesto.codigo || id || '-'}</div>
                         </div>
                         <span class="status-badge" data-status="${estado}">${estado}</span>
                     </div>
-                    <div class="mp-order-meta">
-                        <div><i class="fa-solid fa-dollar-sign"></i> ${Number(precio).toLocaleString('es-ES')} </div>
-                        <div><i class="fa-solid fa-boxes-stacked"></i> Stock ${stock}</div>
-                    </div>
-                    <div class="mp-card-actions">
-                        <button class="op-btn-primary" onclick="abrirFormUso(${repuesto.idRepuesto || repuesto.id}, '${(repuesto.nombre || repuesto.descripcion || 'Repuesto').replace(/'/g, '\\'')}')">
-                            <i class="fa-solid fa-plus"></i> Registrar uso
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="mp-order-meta" style="gap:.75rem; margin-bottom:0;">
+                            <div><i class="fa-solid fa-dollar-sign"></i> ${Number(precio).toLocaleString('es-ES')}</div>
+                            <div><i class="fa-solid fa-boxes-stacked"></i> Stock: ${stock}</div>
+                        </div>
+                        <button class="op-btn-primary" onclick='abrirFormUso(${id}, ${nombre})' style="padding:.4rem .8rem; font-size:.85rem;">
+                            <i class="fa-solid fa-plus"></i> Usar
                         </button>
                     </div>
                 </div>
@@ -440,9 +436,16 @@ function abrirFormUso(idRepuesto, nombre) {
 }
 
 async function confirmarUsoRepuesto() {
-    const idRepuesto = document.getElementById('mp-uso-repuesto').value.match(/\((\d+)\)/)?.[1];
+    const val = document.getElementById('mp-uso-repuesto').value;
+    const match = val.match(/\((\d+)\)/);
+    const idRepuesto = match ? match[1] : null;
     const cantidad = document.getElementById('mp-uso-cantidad').value;
-    const idOrden = document.getElementById('mp-uso-orden').value;
+    const idOrden = mpCurrentOrdenId;
+
+    if (!idRepuesto || !idOrden) {
+        showBanner('Datos inválidos para registrar uso.', 'danger');
+        return;
+    }
 
     try {
         const res = await apiFetch('/api/movimientos-inventario', {
@@ -450,7 +453,7 @@ async function confirmarUsoRepuesto() {
             body: JSON.stringify({ idRepuesto, cantidad, idOrden, tipo: 'uso' })
         });
         if (res.ok) {
-            showBanner('✅ Uso de repuesto registrado.', 'success');
+            showBanner('✅ Uso de repuesto registrado en esta orden.', 'success');
             document.getElementById('mp-reg-uso-form').style.display = 'none';
             document.getElementById('mp-uso-cantidad').value = 1;
             loadRepuestos(document.getElementById('mp-rep-search')?.value || '');
@@ -460,19 +463,6 @@ async function confirmarUsoRepuesto() {
     } catch (error) {
         console.error('Error registrando uso de repuesto:', error);
     }
-}
-
-function populateOrdenSelects(ordenes) {
-    const diagSelect = document.getElementById('mp-diag-orden');
-    const usoSelect = document.getElementById('mp-uso-orden');
-    const opciones = ordenes.length ? ordenes.map(orden => {
-        const id = orden.idOrden || orden.id;
-        const placa = orden.vehiculo?.placa || orden.placa || 'Sin placa';
-        return `<option value="${id}">#${id} · ${placa}</option>`;
-    }).join('') : '<option value="">Sin órdenes activas</option>';
-
-    if (diagSelect) diagSelect.innerHTML = opciones;
-    if (usoSelect) usoSelect.innerHTML = opciones;
 }
 
 function showBanner(message, type = 'success') {
